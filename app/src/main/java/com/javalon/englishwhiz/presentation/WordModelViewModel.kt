@@ -5,12 +5,14 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.javalon.englishwhiz.data.local.entity.WordModelEntity
 import com.javalon.englishwhiz.data.repository.WordRepository
 import com.javalon.englishwhiz.domain.model.WordModel
 import com.javalon.englishwhiz.util.Resource
 import com.javalon.englishwhiz.util.Trie
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.Default
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -48,6 +50,18 @@ class WordModelViewModel @Inject constructor(private val wordRepo: WordRepositor
                 _state.value = wordState
                 _searchEvent.emit(true)
             }
+        }
+    }
+
+    fun insertWordModel(wordModel: WordModel) {
+        viewModelScope.launch(IO) {
+            wordRepo.insertWordModel(wordModel.toWordModelEntity())
+        }
+    }
+
+    fun getAllBookmark() {
+        viewModelScope.launch(IO) {
+            val result = wordRepo.getAllBookmark()
         }
     }
 

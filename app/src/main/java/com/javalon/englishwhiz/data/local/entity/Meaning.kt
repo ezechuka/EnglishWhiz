@@ -1,4 +1,4 @@
-package com.javalon.englishwhiz.data.local
+package com.javalon.englishwhiz.data.local.entity
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonInclude

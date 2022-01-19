@@ -93,7 +93,7 @@ fun HomeScreen(
             )
         }
 
-        SearchComponent(viewModel.state.value.wordModel, scaffoldState, textToSpeechEngine, onInit)
+        SearchComponent(viewModel.state.value.wordModel, scaffoldState, textToSpeechEngine, onInit, viewModel)
     }
 
 }
@@ -103,7 +103,8 @@ fun SearchComponent(
     wordModel: WordModel?,
     scaffoldState: ScaffoldState,
     textToSpeechEngine: TextToSpeech,
-    onInit: Boolean
+    onInit: Boolean,
+    viewModel: WordModelViewModel
 ) {
     Column(
         modifier = Modifier
@@ -126,7 +127,7 @@ fun SearchComponent(
                 .background(cardBGDay),
             shape = RoundedCornerShape(8.dp)
         ) {
-            SearchResult(wordModel, scaffoldState, textToSpeechEngine, onInit)
+            SearchResult(wordModel, scaffoldState, textToSpeechEngine, onInit, viewModel)
         }
     }
 }
@@ -136,7 +137,8 @@ fun SearchResult(
     wordModel: WordModel?,
     scaffold: ScaffoldState,
     textToSpeechEngine: TextToSpeech,
-    onInit: Boolean
+    onInit: Boolean,
+    viewModel: WordModelViewModel
 ) {
     Column(
         modifier = Modifier
@@ -154,7 +156,7 @@ fun SearchResult(
                 .align(Alignment.CenterHorizontally)
         )
 
-        SearchContent(wordModel, scaffold, textToSpeechEngine, onInit)
+        SearchContent(wordModel, scaffold, textToSpeechEngine, onInit, viewModel)
     }
 }
 
@@ -163,7 +165,8 @@ fun SearchContent(
     wordModel: WordModel?,
     scaffold: ScaffoldState,
     textToSpeechEngine: TextToSpeech,
-    onInit: Boolean
+    onInit: Boolean,
+    viewModel: WordModelViewModel
 ) {
     Row(
         modifier = Modifier
@@ -174,7 +177,7 @@ fun SearchContent(
     ) {
         val clipboardManager = LocalClipboardManager.current
         val context = LocalContext.current
-        val utilItemList = provideUtilItemList(clipboardManager, context)
+        val utilItemList = provideUtilItemList(clipboardManager, context, viewModel)
         UtilItemComponent(utilItemList, scaffold, textToSpeechEngine, onInit)
     }
 
@@ -400,7 +403,7 @@ fun UtilItemComponent(
     }
 }
 
-fun provideUtilItemList(clipboardManager: ClipboardManager, context: Context): List<UtilItem> {
+fun provideUtilItemList(clipboardManager: ClipboardManager, context: Context, viewModel: WordModelViewModel): List<UtilItem> {
 
     val copy = {
         clipboardManager.setText(buildAnnotatedString {
@@ -409,7 +412,10 @@ fun provideUtilItemList(clipboardManager: ClipboardManager, context: Context): L
     }
 
     val save = {
-
+        val wordModel = viewModel.state.value.wordModel
+        if (wordModel != null) {
+            viewModel.insertWordModel(wordModel)
+        }
     }
 
     val share = {
