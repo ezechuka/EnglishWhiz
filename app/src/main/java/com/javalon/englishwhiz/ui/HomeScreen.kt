@@ -4,9 +4,11 @@ import android.content.Context
 import android.content.Intent
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,48 +17,67 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Card
 import androidx.compose.material.Divider
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.ClipboardManager
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.ExperimentalUnitApi
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.toSize
+import androidx.compose.ui.window.PopupProperties
 import com.javalon.englishwhiz.R
 import com.javalon.englishwhiz.domain.model.UtilItem
 import com.javalon.englishwhiz.domain.model.WordModel
 import com.javalon.englishwhiz.presentation.WordModelViewModel
+import com.javalon.englishwhiz.ui.theme.blueBGDay
 import com.javalon.englishwhiz.ui.theme.blueText
 import com.javalon.englishwhiz.ui.theme.cardBGDay
 import kotlinx.coroutines.launch
 import java.util.*
 
 var dictionaryStringBuilder = StringBuilder()
+var dropDownOptions = mutableStateOf(listOf<String>())
 
+@ExperimentalUnitApi
+@ExperimentalComposeUiApi
 @Composable
 fun HomeScreen(
     viewModel: WordModelViewModel,
@@ -65,51 +86,131 @@ fun HomeScreen(
     onInit: Boolean
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
-                .height(56.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
+                .height(64.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            TextField(
-                value = viewModel.searchQuery.value,
-                onValueChange = viewModel::search,
-                singleLine = true,
-                placeholder = {
+            val keyboardController = LocalSoftwareKeyboardController.current
+            AutoCompleteTextField(
+                modifier = Modifier.fillMaxWidth(),
+                suggestions = dropDownOptions.value,
+                viewModel = viewModel,
+                onDoneActionClick = {
+                    keyboardController?.hide()
+                },
+                onQueryChanged = {
+                    dropDownOptions.value = viewModel.matches.value
+                    Log.d("HOME-SCREEN", dropDownOptions.value.toString())
+                },
+                onItemClick = {
+                    viewModel.search(it)
+                },
+                itemContent = {
                     Text(
-                        text = "Search by word...",
-                        style = MaterialTheme.typography.caption,
-                        color = Color.Gray
+                        text = it,
+                        color = blueText,
                     )
-                },
-                leadingIcon = {
-                    Icon(painter = painterResource(R.drawable.search), contentDescription = null)
-                },
-                trailingIcon = {
-                    if (viewModel.searchQuery.value.isNotEmpty()) {
-                        IconButton(onClick = { viewModel.search("") }) {
-                            Icon(painter = painterResource(R.drawable.clear),
-                                contentDescription = null)
-                        }
-                    }
-                },
-                colors = TextFieldDefaults.textFieldColors(
-                    focusedIndicatorColor = Color.Transparent,
-                    backgroundColor = cardBGDay,
-                    unfocusedIndicatorColor = Color.Transparent
-                ),
-                shape = RoundedCornerShape(8.dp),
-                modifier = Modifier.fillMaxSize()
+                }
             )
         }
 
-        SearchComponent(viewModel.state.value.wordModel, scaffoldState, textToSpeechEngine, onInit, viewModel)
+        SearchComponent(
+            viewModel.state.value.wordModel,
+            scaffoldState, textToSpeechEngine, onInit, viewModel
+        )
     }
-
 }
 
+@ExperimentalComposeUiApi
+@Composable
+fun <T> AutoCompleteTextField(
+    modifier: Modifier = Modifier,
+    suggestions: List<T>,
+    onDoneActionClick: () -> Unit = {},
+    viewModel: WordModelViewModel,
+    onQueryChanged: () -> Unit = {},
+    onItemClick: (T) -> Unit = {},
+    itemContent: @Composable (T) -> Unit = {}
+) {
+    Column {
+        var rowSize by remember { mutableStateOf(Size.Zero) }
+        val expandedState = remember { mutableStateOf(false) }
+        TextField(
+            value = viewModel.searchQuery.value,
+            onValueChange = {
+                viewModel.prefixMatch(it)
+                viewModel.search(it)
+                onQueryChanged()
+                if (it.isNotEmpty()) expandedState.value = true
+            },
+            singleLine = true,
+            placeholder = {
+                Text(
+                    text = "Search by word...",
+                    style = MaterialTheme.typography.caption,
+                    color = Color.Gray
+                )
+            },
+            leadingIcon = {
+                Icon(painter = painterResource(R.drawable.search), contentDescription = null)
+            },
+            trailingIcon = {
+                if (viewModel.searchQuery.value.isNotEmpty()) {
+                    IconButton(onClick = { viewModel.search("") }) {
+                        Icon(
+                            painter = painterResource(R.drawable.clear),
+                            contentDescription = null
+                        )
+                    }
+                }
+            },
+            colors = TextFieldDefaults.textFieldColors(
+                focusedIndicatorColor = Color.Transparent,
+                backgroundColor = cardBGDay,
+                unfocusedIndicatorColor = Color.Transparent
+            ),
+            keyboardActions = KeyboardActions(onDone = {
+                onDoneActionClick()
+            }),
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Done,
+                keyboardType = KeyboardType.Text
+            ),
+            shape = RoundedCornerShape(8.dp),
+            modifier = modifier
+                .onGloballyPositioned { layoutCoordinates ->
+                    rowSize = layoutCoordinates.size.toSize()
+                },
+        )
+
+        DropdownMenu(
+            expanded = expandedState.value,
+            onDismissRequest = { expandedState.value = false },
+            modifier = Modifier.width(with(LocalDensity.current) {
+                rowSize.width.toDp()
+            }).background(blueBGDay),
+            properties = PopupProperties(
+                focusable = false,
+                dismissOnBackPress = true,
+                dismissOnClickOutside = true
+            )
+        ) {
+            suggestions.forEach { label ->
+                DropdownMenuItem(onClick = {
+                    onItemClick(label)
+                    expandedState.value = false
+                }) {
+                    itemContent(label)
+                }
+            }
+        }
+    }
+}
+
+@ExperimentalUnitApi
 @Composable
 fun SearchComponent(
     wordModel: WordModel?,
@@ -144,6 +245,7 @@ fun SearchComponent(
     }
 }
 
+@ExperimentalUnitApi
 @Composable
 fun SearchResult(
     wordModel: WordModel?,
@@ -172,6 +274,7 @@ fun SearchResult(
     }
 }
 
+@ExperimentalUnitApi
 @Composable
 fun SearchContent(
     wordModel: WordModel?,
@@ -214,6 +317,7 @@ fun SearchContent(
                 Text(
                     text = "${index + 1}. ${meaning.def}",
                     style = MaterialTheme.typography.subtitle2,
+                    lineHeight = TextUnit(18f, TextUnitType.Sp),
                     color = Color.Black
                 )
                 if (!meaning.labels.isNullOrEmpty()) {
@@ -234,6 +338,7 @@ fun SearchContent(
                     Text(
                         text = example,
                         fontStyle = FontStyle.Italic,
+                        lineHeight = TextUnit(16f, TextUnitType.Sp),
                         style = MaterialTheme.typography.subtitle2.copy(fontWeight = FontWeight.Normal),
                         color = Color.Gray
                     )
@@ -248,6 +353,7 @@ fun SearchContent(
                     Text(
                         text = synonym,
                         fontStyle = FontStyle.Italic,
+                        lineHeight = TextUnit(16f, TextUnitType.Sp),
                         style = MaterialTheme.typography.subtitle2.copy(fontWeight = FontWeight.Normal),
                         color = Color.Gray
                     )
@@ -331,8 +437,7 @@ fun UtilItemComponent(
                 coroutineScope.launch {
                     item[1].message?.let { scaffold.snackbarHostState.showSnackbar(message = it) }
                 }
-            }
-            else {
+            } else {
                 Icon(
                     painterResource(id = item[1].itemIcon),
                     contentDescription = item[1].itemText
@@ -344,7 +449,8 @@ fun UtilItemComponent(
                 color = MaterialTheme.colors.onSurface,
                 style = MaterialTheme.typography.subtitle2
             )
-            textToSpeechEngine.setOnUtteranceProgressListener(object: UtteranceProgressListener() {
+            textToSpeechEngine.setOnUtteranceProgressListener(object :
+                UtteranceProgressListener() {
 
                 override fun onError(p0: String?) {
                 }
@@ -415,7 +521,11 @@ fun UtilItemComponent(
     }
 }
 
-fun provideUtilItemList(clipboardManager: ClipboardManager, context: Context, viewModel: WordModelViewModel): List<UtilItem> {
+fun provideUtilItemList(
+    clipboardManager: ClipboardManager,
+    context: Context,
+    viewModel: WordModelViewModel
+): List<UtilItem> {
 
     val copy = {
         clipboardManager.setText(buildAnnotatedString {
@@ -432,7 +542,10 @@ fun provideUtilItemList(clipboardManager: ClipboardManager, context: Context, vi
 
     val share = {
         val intentFileChooser = Intent(Intent.ACTION_SEND)
-        intentFileChooser.putExtra(Intent.EXTRA_TEXT, "Please download and rate us now: www.google.com")
+        intentFileChooser.putExtra(
+            Intent.EXTRA_TEXT,
+            "Please download and rate us now: www.google.com"
+        )
         intentFileChooser.type = "text/plain"
         val intent = Intent.createChooser(intentFileChooser, "Share EnglishWhiz")
         context.startActivity(intent)

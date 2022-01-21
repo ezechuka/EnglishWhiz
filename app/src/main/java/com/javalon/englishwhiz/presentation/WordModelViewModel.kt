@@ -23,12 +23,15 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class WordModelViewModel @Inject constructor(private val wordRepo: WordRepository): ViewModel() {
+class WordModelViewModel @Inject constructor(private val wordRepo: WordRepository) : ViewModel() {
     private val _searchQuery = mutableStateOf("")
     val searchQuery: State<String> = _searchQuery
 
     private val _state = mutableStateOf(WordState())
     val state: State<WordState> = _state
+
+    private val _matches = mutableStateOf(emptyList<String>())
+    val matches: State<List<String>> = _matches
 
     private val _isRetrieved = MutableSharedFlow<Boolean>()
     val isRetrieved: SharedFlow<Boolean> = _isRetrieved.asSharedFlow()
@@ -53,6 +56,24 @@ class WordModelViewModel @Inject constructor(private val wordRepo: WordRepositor
         }
     }
 
+    fun prefixMatch(query: String) {
+        if (query.isEmpty()) {
+            _matches.value = emptyList() // clear previous `matches` state
+            return
+        }
+        val matches = trieDictionary.prefixMatch(query.toList())
+        val results = mutableListOf<String>()
+        for (i in matches.indices) {
+            if (i == 5)
+                break
+            else {
+                results.add(matches[i].joinToString(""))
+            }
+        }
+        Log.d("VIEWMODEL", results.toString())
+        _matches.value = results
+    }
+
     fun insertWordModel(wordModel: WordModel) {
         viewModelScope.launch(IO) {
             wordRepo.insertWordModel(wordModel.toWordModelEntity())
@@ -71,7 +92,7 @@ class WordModelViewModel @Inject constructor(private val wordRepo: WordRepositor
                 when (result) {
                     is Resource.Success -> {
                         result.data?.forEach { (key, value) ->
-                            value.forEach {wordModel ->
+                            value.forEach { wordModel ->
                                 trieDictionary.insert(wordModel.word.toList(), wordModel)
                             }
                         }
