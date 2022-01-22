@@ -2,8 +2,10 @@ package com.javalon.englishwhiz.di
 
 import android.content.Context
 import androidx.room.Room
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.javalon.englishwhiz.data.WordModelDatabase
 import com.javalon.englishwhiz.data.local.WordModelDao
 import com.javalon.englishwhiz.data.repository.WordRepository
@@ -33,6 +35,7 @@ object EnglishWhizModule {
     @Singleton
     fun provideGson(): ObjectMapper {
         return ObjectMapper()
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
     }
 
     @Provides

@@ -93,7 +93,7 @@ class WordModelViewModel @Inject constructor(private val wordRepo: WordRepositor
                     is Resource.Success -> {
                         result.data?.forEach { (key, value) ->
                             value.forEach { wordModel ->
-                                trieDictionary.insert(wordModel.word.toList(), wordModel)
+                                wordModel.word?.toList()?.let { trieDictionary.insert(it, wordModel) }
                             }
                         }
                         Log.d("VIEWMODEL", result.message ?: "SUCCESS")

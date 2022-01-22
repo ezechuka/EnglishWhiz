@@ -2,6 +2,7 @@ package com.javalon.englishwhiz.data.repository
 
 import android.content.Context
 import android.util.Log
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.Gson
 import com.javalon.englishwhiz.data.local.WordModelDao
@@ -44,7 +45,7 @@ class WordRepository @Inject constructor(
                 while (iterator.hasNext()) {
                     val key = iterator.next()
                     val value = jsonObject.get(key) as JSONObject
-//                        val word = gson.fromJson(value.toString(), WordModelDto::class.java)
+//                    val word = gson.fromJson(value.toString(), WordModelDto::class.java)
                     val word = objectMapper.readValue(value.toString(), WordModelDto::class.java)
                     wordList.add(word)
                 }
