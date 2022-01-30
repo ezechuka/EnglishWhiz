@@ -4,12 +4,9 @@ import android.content.Context
 import androidx.room.Room
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import com.javalon.englishwhiz.data.WordModelDatabase
 import com.javalon.englishwhiz.data.local.WordModelDao
 import com.javalon.englishwhiz.data.repository.WordRepository
-import com.javalon.englishwhiz.domain.model.WordModel
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -41,7 +38,7 @@ object EnglishWhizModule {
     @Provides
     @Singleton
     fun provideWordModelDao(wordModelDatabase: WordModelDatabase): WordModelDao {
-        return wordModelDatabase.wordModelDao()
+        return wordModelDatabase.wordModelDao
     }
 
     @Provides

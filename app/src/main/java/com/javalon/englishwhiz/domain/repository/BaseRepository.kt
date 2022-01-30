@@ -8,7 +8,9 @@ import kotlinx.coroutines.flow.Flow
 interface BaseRepository {
     fun readFromJsonStream(): Flow<Resource<MutableMap<String, List<WordModel>>>>
 
-    fun insertWordModel(wordModelEntity: WordModelEntity): Flow<Resource<Boolean>>
+    suspend fun insertWordModel(wordModelEntity: WordModelEntity)
 
-    fun getAllBookmark(): Flow<Resource<List<WordModelEntity>>>
+    suspend fun getAllBookmark(): Flow<Resource<List<WordModelEntity>>>
+
+    suspend fun deleteBookmark(wordModelEntity: WordModelEntity)
 }

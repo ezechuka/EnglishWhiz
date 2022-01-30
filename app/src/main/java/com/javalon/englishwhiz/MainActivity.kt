@@ -25,7 +25,6 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -41,51 +40,38 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
+import com.javalon.englishwhiz.presentation.BookmarkViewModel
 import com.javalon.englishwhiz.presentation.BottomNavItem
 import com.javalon.englishwhiz.presentation.WordModelViewModel
 import com.javalon.englishwhiz.presentation.provideBottomNavItems
+import com.javalon.englishwhiz.ui.BookmarkScreen
 import com.javalon.englishwhiz.ui.HomeScreen
 import com.javalon.englishwhiz.ui.navigation.NavScreen
 import com.javalon.englishwhiz.ui.theme.EnglishWhizTheme
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.InternalCoroutinesApi
 
-@ExperimentalAnimationApi
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private lateinit var textToSpeechEngine: TextToSpeech
 
+    @ExperimentalAnimationApi
+    @InternalCoroutinesApi
     @ExperimentalUnitApi
     @ExperimentalComposeUiApi
-    @ExperimentalAnimationApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             EnglishWhizTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-                    val viewModel = hiltViewModel<WordModelViewModel>()
-                    LaunchedEffect(key1 = true) {
-                        viewModel.isRetrieved.collectLatest { result ->
-//                            if (result)
-//                                viewModel.search("log")
-                        }
-                    }
-
-                    LaunchedEffect(key1 = true) {
-                        viewModel.searchEvent.collectLatest {
-                            Log.d(
-                                "MainActivity",
-                                viewModel.state.value.wordModel?.meanings.toString()
-                            )
-                        }
-                    }
-
                     var onInit = false
                     textToSpeechEngine = TextToSpeech(this, { status ->
                         if (status == TextToSpeech.SUCCESS)
@@ -99,21 +85,26 @@ class MainActivity : ComponentActivity() {
                         bottomBar = {
                             BottomNavigationBar(
                                 items = provideBottomNavItems(),
-                                navController = navController
+                                navController
                             ) {
                                 navController.navigate(it.route) {
                                     popUpTo(navController.graph.startDestinationId)
+                                    Log.d("VIEW", navController.graph.startDestinationId.toString())
                                     launchSingleTop = true
                                 }
                             }
                         }, scaffoldState = scaffoldState
                     ) {
-                        Box(modifier = Modifier.padding(
-                            top = 0.dp, start = 0.dp, end = 0.dp, bottom = it.calculateBottomPadding() + 4.dp
-                        )) {
+                        Box(
+                            modifier = Modifier.padding(
+                                top = 0.dp,
+                                start = 0.dp,
+                                end = 0.dp,
+                                bottom = it.calculateBottomPadding() + 4.dp
+                            )
+                        ) {
                             EnglishWhizNavigation(
                                 navController = navController,
-                                viewModel = viewModel,
                                 scaffoldState, textToSpeechEngine, onInit
                             )
                         }
@@ -179,7 +170,7 @@ fun CustomNavigationItem(item: BottomNavItem, onClick: () -> Unit, selected: Boo
         modifier = Modifier
             .clip(RoundedCornerShape(12.dp))
             .background(backgroundColor)
-            .clickable(onClick = onClick)
+            .clickable { onClick() }
     ) {
         Row(
             modifier = Modifier.padding(vertical = 12.dp, horizontal = 20.dp),
@@ -205,23 +196,47 @@ fun CustomNavigationItem(item: BottomNavItem, onClick: () -> Unit, selected: Boo
     }
 }
 
+@InternalCoroutinesApi
 @ExperimentalUnitApi
 @ExperimentalComposeUiApi
 @Composable
 fun EnglishWhizNavigation(
     navController: NavHostController,
-    viewModel: WordModelViewModel,
     scaffoldState: ScaffoldState,
     textToSpeechEngine: TextToSpeech,
     onInit: Boolean
 ) {
-    NavHost(navController = navController, startDestination = NavScreen.HomeScreen.route) {
-        composable(route = NavScreen.HomeScreen.route) {
-            HomeScreen(viewModel, scaffoldState, textToSpeechEngine, onInit)
+    val wordModelViewModel = hiltViewModel<WordModelViewModel>()
+    val bookmarkViewModel = hiltViewModel<BookmarkViewModel>()
+    NavHost(
+        navController = navController,
+        startDestination = NavScreen.HomeScreen.routeWithArgument
+    ) {
+        composable(
+            route = NavScreen.HomeScreen.routeWithArgument,
+            arguments = listOf(
+                navArgument("wordIndex") {
+                    type = NavType.IntType
+                    defaultValue = -1
+                }
+            )
+        ) {
+            HomeScreen(
+                wordViewModel = wordModelViewModel,
+                bookmarkViewModel = bookmarkViewModel,
+                scaffoldState,
+                textToSpeechEngine,
+                onInit,
+                it.arguments?.getInt("wordIndex", -1)
+            )
         }
 
-        composable(route = NavScreen.RandomWordScreen.route) {
-
+        composable(route = NavScreen.BookmarkScreen.route) {
+            BookmarkScreen(viewModel = bookmarkViewModel) { index ->
+                navController.navigate("${NavScreen.HomeScreen.route}?wordIndex=$index") {
+                    launchSingleTop = true
+                }
+            }
         }
 
         composable(route = NavScreen.HistoryScreen.route) {
@@ -237,7 +252,7 @@ fun BottomNavigationPreview() {
     EnglishWhizTheme {
         BottomNavigationBar(
             items = provideBottomNavItems(),
-            navController = rememberNavController()
+            rememberNavController()
         ) {}
     }
 }

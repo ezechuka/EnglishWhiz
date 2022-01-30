@@ -8,7 +8,6 @@ import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -30,15 +29,16 @@ import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.*
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -66,25 +66,36 @@ import androidx.compose.ui.window.PopupProperties
 import com.javalon.englishwhiz.R
 import com.javalon.englishwhiz.domain.model.UtilItem
 import com.javalon.englishwhiz.domain.model.WordModel
+import com.javalon.englishwhiz.presentation.BookmarkViewModel
 import com.javalon.englishwhiz.presentation.WordModelViewModel
 import com.javalon.englishwhiz.ui.theme.blueBGDay
 import com.javalon.englishwhiz.ui.theme.blueText
 import com.javalon.englishwhiz.ui.theme.cardBGDay
+import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.launch
 import java.util.*
 
 var dictionaryStringBuilder = StringBuilder()
 var dropDownOptions = mutableStateOf(listOf<String>())
 
+@InternalCoroutinesApi
 @ExperimentalUnitApi
 @ExperimentalComposeUiApi
 @Composable
 fun HomeScreen(
-    viewModel: WordModelViewModel,
+    wordViewModel: WordModelViewModel,
+    bookmarkViewModel: BookmarkViewModel,
     scaffoldState: ScaffoldState,
     textToSpeechEngine: TextToSpeech,
-    onInit: Boolean
+    onInit: Boolean,
+    wordIndex: Int?
 ) {
+    val wordModelState = remember { mutableStateOf(wordViewModel.state) }
+    if (wordIndex != -1) {
+        val wordModel = bookmarkViewModel.bookmarks.value[wordIndex!!]
+        wordModelState.value = remember { mutableStateOf(wordModel) }
+    }
+
     Column(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
@@ -97,16 +108,16 @@ fun HomeScreen(
             AutoCompleteTextField(
                 modifier = Modifier.fillMaxWidth(),
                 suggestions = dropDownOptions.value,
-                viewModel = viewModel,
+                viewModel = wordViewModel,
                 onDoneActionClick = {
                     keyboardController?.hide()
                 },
                 onQueryChanged = {
-                    dropDownOptions.value = viewModel.matches.value
+                    dropDownOptions.value = wordViewModel.matches.value
                     Log.d("HOME-SCREEN", dropDownOptions.value.toString())
                 },
                 onItemClick = {
-                    viewModel.search(it)
+                    wordViewModel.search(it)
                 },
                 itemContent = {
                     Text(
@@ -118,8 +129,8 @@ fun HomeScreen(
         }
 
         SearchComponent(
-            viewModel.state.value.wordModel,
-            scaffoldState, textToSpeechEngine, onInit, viewModel
+            wordModelState.value.value,
+            scaffoldState, textToSpeechEngine, onInit, wordViewModel
         )
     }
 }
@@ -189,9 +200,11 @@ fun <T> AutoCompleteTextField(
         DropdownMenu(
             expanded = expandedState.value,
             onDismissRequest = { expandedState.value = false },
-            modifier = Modifier.width(with(LocalDensity.current) {
-                rowSize.width.toDp()
-            }).background(blueBGDay),
+            modifier = Modifier
+                .width(with(LocalDensity.current) {
+                    rowSize.width.toDp()
+                })
+                .background(blueBGDay),
             properties = PopupProperties(
                 focusable = false,
                 dismissOnBackPress = true,
@@ -210,6 +223,7 @@ fun <T> AutoCompleteTextField(
     }
 }
 
+@InternalCoroutinesApi
 @ExperimentalUnitApi
 @Composable
 fun SearchComponent(
@@ -236,15 +250,16 @@ fun SearchComponent(
 
         Card(
             modifier = Modifier
-                .fillMaxWidth()
-                .background(cardBGDay),
-            shape = RoundedCornerShape(8.dp)
+                .fillMaxWidth(),
+            shape = RoundedCornerShape(8.dp),
+            backgroundColor = cardBGDay
         ) {
             SearchResult(wordModel, scaffoldState, textToSpeechEngine, onInit, viewModel)
         }
     }
 }
 
+@InternalCoroutinesApi
 @ExperimentalUnitApi
 @Composable
 fun SearchResult(
@@ -257,7 +272,6 @@ fun SearchResult(
     Column(
         modifier = Modifier
             .verticalScroll(rememberScrollState())
-            .fillMaxWidth()
     ) {
         Text(
             text = wordModel?.word ?: "",
@@ -274,6 +288,7 @@ fun SearchResult(
     }
 }
 
+@InternalCoroutinesApi
 @ExperimentalUnitApi
 @Composable
 fun SearchContent(
@@ -521,6 +536,7 @@ fun UtilItemComponent(
     }
 }
 
+@InternalCoroutinesApi
 fun provideUtilItemList(
     clipboardManager: ClipboardManager,
     context: Context,
@@ -534,7 +550,7 @@ fun provideUtilItemList(
     }
 
     val save = {
-        val wordModel = viewModel.state.value.wordModel
+        val wordModel = viewModel.state.value
         if (wordModel != null) {
             viewModel.insertWordModel(wordModel)
         }

@@ -2,9 +2,7 @@ package com.javalon.englishwhiz.data.repository
 
 import android.content.Context
 import android.util.Log
-import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.google.gson.Gson
 import com.javalon.englishwhiz.data.local.WordModelDao
 import com.javalon.englishwhiz.data.local.entity.WordModelDto
 import com.javalon.englishwhiz.data.local.entity.WordModelEntity
@@ -66,15 +64,17 @@ class WordRepository @Inject constructor(
         emit(Resource.Success(data = wordMap))
     }
 
-    override fun insertWordModel(wordModelEntity: WordModelEntity): Flow<Resource<Boolean>> = flow {
-        emit(Resource.Loading(false))
+    override suspend fun insertWordModel(wordModelEntity: WordModelEntity) {
         wordModelDao.insertWordModel(wordModelEntity)
-        emit(Resource.Success(true))
     }
 
-    override fun getAllBookmark(): Flow<Resource<List<WordModelEntity>>> = flow {
+    override suspend fun getAllBookmark(): Flow<Resource<List<WordModelEntity>>> = flow {
         emit(Resource.Loading())
         val result = wordModelDao.getAllBookmark()
         emit(Resource.Success(data = result))
+    }
+
+    override suspend fun deleteBookmark(wordModelEntity: WordModelEntity) {
+        wordModelDao.deleteBookmark(wordModelEntity)
     }
 }

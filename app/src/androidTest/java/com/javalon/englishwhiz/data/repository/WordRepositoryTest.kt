@@ -32,7 +32,7 @@ class WordRepositoryTest {
             WordModelDatabase::class.java
         ).allowMainThreadQueries()
             .build()
-        wordModelDao = wordModelDatabase.wordModelDao()
+        wordModelDao = wordModelDatabase.wordModelDao
     }
 
     @After
@@ -43,13 +43,25 @@ class WordRepositoryTest {
     @Test
     fun insertWordModel() = runBlocking {
         val meaning =
-            Meaning("definition", "example", "id",
-                "speechPart", synonyms = listOf("synon", "yms"),
-                labels = listOf(Label(true, "label", null)
+            Meaning("definition", "example", "speechPart", synonyms = listOf("synon", "yms"),
+                labels = listOf(Label("label")
                 ))
         val wordModelEntity = WordModel(listOf(meaning), "word", "23dfd31").toWordModelEntity()
         wordModelDao.insertWordModel(wordModelEntity)
         val result = wordModelDao.getAllBookmark()
         assertThat(result).contains(wordModelEntity)
+    }
+
+    @Test
+    fun deleteWordModel() = runBlocking {
+        val meaning =
+            Meaning("definition", "example", "speechPart", synonyms = listOf("synon", "yms"),
+                labels = listOf(Label("label")
+                ))
+        val wordModelEntity = WordModel(listOf(meaning), "word", "23dfd31").toWordModelEntity()
+        wordModelDao.insertWordModel(wordModelEntity)
+        wordModelDao.deleteBookmark(wordModelEntity)
+        val result = wordModelDao.getAllBookmark()
+        assertThat(result).doesNotContain(wordModelEntity)
     }
 }

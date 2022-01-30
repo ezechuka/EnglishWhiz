@@ -11,17 +11,17 @@ data class BottomNavItem(
 
 fun provideBottomNavItems() = listOf(
     BottomNavItem(
-        "Home",
+        NavScreen.HomeScreen.route,
         R.drawable.home,
-        NavScreen.HomeScreen.route
+        NavScreen.HomeScreen.routeWithArgument
     ),
     BottomNavItem(
-        "Daily tip",
-        R.drawable.calendar,
-        NavScreen.RandomWordScreen.route
+        NavScreen.BookmarkScreen.route,
+        R.drawable.save,
+        NavScreen.BookmarkScreen.route
     ),
     BottomNavItem(
-        "History",
+        NavScreen.HistoryScreen.route,
         R.drawable.history,
         NavScreen.HistoryScreen.route
     )

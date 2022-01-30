@@ -12,5 +12,5 @@ import com.javalon.englishwhiz.data.local.entity.WordModelEntity
 @TypeConverters(value = [MeaningConverter::class, SynonymConverter::class, LabelConverter::class])
 @Database(entities = [WordModelEntity::class], exportSchema = false, version = 1)
 abstract class WordModelDatabase: RoomDatabase() {
-    abstract fun wordModelDao(): WordModelDao
+    abstract val wordModelDao: WordModelDao
 }
