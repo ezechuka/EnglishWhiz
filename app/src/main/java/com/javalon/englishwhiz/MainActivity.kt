@@ -48,9 +48,11 @@ import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
 import com.javalon.englishwhiz.presentation.BookmarkViewModel
 import com.javalon.englishwhiz.presentation.BottomNavItem
+import com.javalon.englishwhiz.presentation.HistoryViewModel
 import com.javalon.englishwhiz.presentation.WordModelViewModel
 import com.javalon.englishwhiz.presentation.provideBottomNavItems
 import com.javalon.englishwhiz.ui.BookmarkScreen
+import com.javalon.englishwhiz.ui.HistoryScreen
 import com.javalon.englishwhiz.ui.HomeScreen
 import com.javalon.englishwhiz.ui.navigation.NavScreen
 import com.javalon.englishwhiz.ui.theme.EnglishWhizTheme
@@ -89,7 +91,6 @@ class MainActivity : ComponentActivity() {
                             ) {
                                 navController.navigate(it.route) {
                                     popUpTo(navController.graph.startDestinationId)
-                                    Log.d("VIEW", navController.graph.startDestinationId.toString())
                                     launchSingleTop = true
                                 }
                             }
@@ -208,39 +209,50 @@ fun EnglishWhizNavigation(
 ) {
     val wordModelViewModel = hiltViewModel<WordModelViewModel>()
     val bookmarkViewModel = hiltViewModel<BookmarkViewModel>()
+    val historyViewModel = hiltViewModel<HistoryViewModel>()
     NavHost(
         navController = navController,
-        startDestination = NavScreen.HomeScreen.routeWithArgument
+        startDestination = "${NavScreen.HomeScreen.route}?wordIndex={wordIndex}?bookmark={bookmark}"
     ) {
         composable(
-            route = NavScreen.HomeScreen.routeWithArgument,
+            route = "${NavScreen.HomeScreen.route}?wordIndex={wordIndex}?bookmark={bookmark}",
             arguments = listOf(
                 navArgument("wordIndex") {
                     type = NavType.IntType
                     defaultValue = -1
+                },
+                navArgument("bookmark") {
+                    type = NavType.BoolType
+                    defaultValue = true
                 }
             )
         ) {
             HomeScreen(
                 wordViewModel = wordModelViewModel,
                 bookmarkViewModel = bookmarkViewModel,
+                historyViewModel = historyViewModel,
                 scaffoldState,
                 textToSpeechEngine,
                 onInit,
-                it.arguments?.getInt("wordIndex", -1)
+                it.arguments?.getInt("wordIndex", -1),
+                it.arguments?.getBoolean("bookmark", true)
             )
         }
 
         composable(route = NavScreen.BookmarkScreen.route) {
             BookmarkScreen(viewModel = bookmarkViewModel) { index ->
-                navController.navigate("${NavScreen.HomeScreen.route}?wordIndex=$index") {
+                navController.navigate("${NavScreen.HomeScreen.route}?wordIndex=$index?bookmark=${true}") {
                     launchSingleTop = true
                 }
             }
         }
 
         composable(route = NavScreen.HistoryScreen.route) {
-
+            HistoryScreen(viewModel = historyViewModel) { index ->
+                navController.navigate("${NavScreen.HomeScreen.route}?wordIndex=$index?bookmark=${false}") {
+                    launchSingleTop = true
+                }
+            }
         }
     }
 }

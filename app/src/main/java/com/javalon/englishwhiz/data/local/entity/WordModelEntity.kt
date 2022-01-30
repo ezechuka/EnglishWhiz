@@ -9,7 +9,8 @@ data class WordModelEntity(
     val meanings: List<Meaning>?,
     val word: String,
     @PrimaryKey
-    val wordsetId: String
+    val wordsetId: String,
+    var isBookmark: Boolean = false
 ) {
     fun toWordModel(): WordModel {
         return WordModel(meanings, word, wordsetId)

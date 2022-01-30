@@ -12,8 +12,11 @@ interface WordModelDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertWordModel(wordModelEntity: WordModelEntity)
 
-    @Query("SELECT * FROM wordModelTable")
-    suspend fun getAllBookmark(): List<WordModelEntity>
+    @Query("SELECT * FROM wordModelTable WHERE isBookmark LIKE :bookmark")
+    suspend fun getAllBookmark(bookmark: Boolean = true): List<WordModelEntity>
+
+    @Query("SELECT * FROM wordModelTable WHERE isBookmark LIKE :bookmark")
+    suspend fun getAllHistory(bookmark: Boolean = false): List<WordModelEntity>
 
     @Delete
     suspend fun deleteBookmark(wordModelEntity: WordModelEntity)

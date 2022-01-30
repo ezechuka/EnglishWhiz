@@ -32,11 +32,9 @@ import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.rememberNavController
 import com.javalon.englishwhiz.R
 import com.javalon.englishwhiz.domain.model.WordModel
 import com.javalon.englishwhiz.presentation.BookmarkViewModel
-import com.javalon.englishwhiz.ui.navigation.NavScreen
 import com.javalon.englishwhiz.ui.theme.blueText
 import com.javalon.englishwhiz.ui.theme.cardBGDay
 
@@ -122,7 +120,7 @@ fun BookmarkItem(index: Int, wordModel: WordModel, onItemClick: (Int) -> Unit, o
                         }",
                         style = MaterialTheme.typography.subtitle2,
                         color = blueText,
-                        maxLines = 2,
+                        maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         lineHeight = TextUnit(14f, TextUnitType.Sp),
                         textAlign = TextAlign.Start,
@@ -135,7 +133,7 @@ fun BookmarkItem(index: Int, wordModel: WordModel, onItemClick: (Int) -> Unit, o
                         text = "Ex: $it",
                         style = MaterialTheme.typography.subtitle2,
                         color = blueText,
-                        maxLines = 2,
+                        maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         lineHeight = TextUnit(14f, TextUnitType.Sp),
                         textAlign = TextAlign.Start,
@@ -147,7 +145,7 @@ fun BookmarkItem(index: Int, wordModel: WordModel, onItemClick: (Int) -> Unit, o
 
             IconButton(onClick = { onDeleteClick(wordModel) }, modifier = Modifier.weight(.5f)) {
                 Icon(
-                    painter = painterResource(id = R.drawable.save),
+                    painter = painterResource(id = R.drawable.delete),
                     contentDescription = null,
                     tint = Color.Red
                 )

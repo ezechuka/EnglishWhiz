@@ -64,13 +64,23 @@ class WordRepository @Inject constructor(
         emit(Resource.Success(data = wordMap))
     }
 
-    override suspend fun insertWordModel(wordModelEntity: WordModelEntity) {
+    override suspend fun insertBookmark(wordModelEntity: WordModelEntity) {
+        wordModelDao.insertWordModel(wordModelEntity)
+    }
+
+    override suspend fun insertHistory(wordModelEntity: WordModelEntity) {
         wordModelDao.insertWordModel(wordModelEntity)
     }
 
     override suspend fun getAllBookmark(): Flow<Resource<List<WordModelEntity>>> = flow {
         emit(Resource.Loading())
         val result = wordModelDao.getAllBookmark()
+        emit(Resource.Success(data = result))
+    }
+
+    override suspend fun getAllHistory(): Flow<Resource<List<WordModelEntity>>> = flow {
+        emit(Resource.Loading())
+        val result = wordModelDao.getAllHistory()
         emit(Resource.Success(data = result))
     }
 

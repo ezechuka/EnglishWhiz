@@ -67,6 +67,7 @@ import com.javalon.englishwhiz.R
 import com.javalon.englishwhiz.domain.model.UtilItem
 import com.javalon.englishwhiz.domain.model.WordModel
 import com.javalon.englishwhiz.presentation.BookmarkViewModel
+import com.javalon.englishwhiz.presentation.HistoryViewModel
 import com.javalon.englishwhiz.presentation.WordModelViewModel
 import com.javalon.englishwhiz.ui.theme.blueBGDay
 import com.javalon.englishwhiz.ui.theme.blueText
@@ -85,15 +86,22 @@ var dropDownOptions = mutableStateOf(listOf<String>())
 fun HomeScreen(
     wordViewModel: WordModelViewModel,
     bookmarkViewModel: BookmarkViewModel,
+    historyViewModel: HistoryViewModel,
     scaffoldState: ScaffoldState,
     textToSpeechEngine: TextToSpeech,
     onInit: Boolean,
-    wordIndex: Int?
+    wordIndex: Int?,
+    isBookmark: Boolean?
 ) {
     val wordModelState = remember { mutableStateOf(wordViewModel.state) }
     if (wordIndex != -1) {
-        val wordModel = bookmarkViewModel.bookmarks.value[wordIndex!!]
-        wordModelState.value = remember { mutableStateOf(wordModel) }
+        if (isBookmark == true) {
+            val wordModel = bookmarkViewModel.bookmarks.value[wordIndex!!]
+            wordModelState.value = remember { mutableStateOf(wordModel) }
+        } else {
+            val wordModel = historyViewModel.history.value[wordIndex!!]
+            wordModelState.value = remember { mutableStateOf(wordModel) }
+        }
     }
 
     Column(modifier = Modifier.fillMaxSize()) {
@@ -118,6 +126,7 @@ fun HomeScreen(
                 },
                 onItemClick = {
                     wordViewModel.search(it)
+                    wordViewModel.state.value?.let { searchHistory -> wordViewModel.insertHistory(searchHistory) }
                 },
                 itemContent = {
                     Text(
@@ -552,7 +561,7 @@ fun provideUtilItemList(
     val save = {
         val wordModel = viewModel.state.value
         if (wordModel != null) {
-            viewModel.insertWordModel(wordModel)
+            viewModel.insertBookmark(wordModel)
         }
     }
 

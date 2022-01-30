@@ -73,9 +73,15 @@ class WordModelViewModel @Inject constructor(private val wordRepo: WordRepositor
         _matches.value = results
     }
 
-    fun insertWordModel(wordModel: WordModel) {
+    fun insertBookmark(wordModel: WordModel) {
         viewModelScope.launch(IO) {
-            wordRepo.insertWordModel(wordModel.toWordModelEntity())
+            wordRepo.insertBookmark(wordModel.toWordModelEntity().copy(isBookmark = true))
+        }
+    }
+
+    fun insertHistory(wordModel: WordModel) {
+        viewModelScope.launch(IO) {
+            wordRepo.insertHistory(wordModel.toWordModelEntity().copy(isBookmark = false))
         }
     }
 
