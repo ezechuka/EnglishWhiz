@@ -19,9 +19,9 @@ class BookmarkViewModel @Inject constructor(val wordRepo: WordRepository): ViewM
     private val _bookmarks = mutableStateOf(listOf<WordModel>())
     val bookmarks: State<List<WordModel>> = _bookmarks
 
-    fun deleteWordModel(wordModel: WordModel) {
+    fun deleteBookmark(wordModel: WordModel) {
         viewModelScope.launch(Dispatchers.IO) {
-            wordRepo.deleteBookmark(wordModel.toWordModelEntity())
+            wordRepo.deleteBookmark(wordModel.toBookmarkEntity())
             getAllBookmark()
         }
     }

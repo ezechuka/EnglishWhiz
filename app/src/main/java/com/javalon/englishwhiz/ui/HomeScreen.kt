@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -112,6 +111,7 @@ fun HomeScreen(
                 .height(64.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            dropDownOptions.value = wordViewModel.matches.value
             val keyboardController = LocalSoftwareKeyboardController.current
             AutoCompleteTextField(
                 modifier = Modifier.fillMaxWidth(),
@@ -120,12 +120,8 @@ fun HomeScreen(
                 onDoneActionClick = {
                     keyboardController?.hide()
                 },
-                onQueryChanged = {
-                    dropDownOptions.value = wordViewModel.matches.value
-                    Log.d("HOME-SCREEN", dropDownOptions.value.toString())
-                },
                 onItemClick = {
-                    wordViewModel.search(it)
+                    wordViewModel.searcher(it)
                     wordViewModel.state.value?.let { searchHistory -> wordViewModel.insertHistory(searchHistory) }
                 },
                 itemContent = {
@@ -151,7 +147,6 @@ fun <T> AutoCompleteTextField(
     suggestions: List<T>,
     onDoneActionClick: () -> Unit = {},
     viewModel: WordModelViewModel,
-    onQueryChanged: () -> Unit = {},
     onItemClick: (T) -> Unit = {},
     itemContent: @Composable (T) -> Unit = {}
 ) {
@@ -161,9 +156,8 @@ fun <T> AutoCompleteTextField(
         TextField(
             value = viewModel.searchQuery.value,
             onValueChange = {
-                viewModel.prefixMatch(it)
-                viewModel.search(it)
-                onQueryChanged()
+                viewModel.prefixMatcher(it)
+                viewModel.searcher(it)
                 if (it.isNotEmpty()) expandedState.value = true
             },
             singleLine = true,
@@ -179,7 +173,7 @@ fun <T> AutoCompleteTextField(
             },
             trailingIcon = {
                 if (viewModel.searchQuery.value.isNotEmpty()) {
-                    IconButton(onClick = { viewModel.search("") }) {
+                    IconButton(onClick = { viewModel.searcher("") }) {
                         Icon(
                             painter = painterResource(R.drawable.clear),
                             contentDescription = null

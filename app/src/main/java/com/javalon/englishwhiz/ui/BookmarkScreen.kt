@@ -6,8 +6,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -57,7 +57,7 @@ fun BookmarkScreen(viewModel: BookmarkViewModel, onItemClick: (Int) -> Unit) {
         )
 
         BookmarkList(list = bookmarks.value, onItemClick = onItemClick) {
-            viewModel.deleteWordModel(it)
+            viewModel.deleteBookmark(it)
         }
     }
 }
@@ -79,7 +79,7 @@ fun BookmarkItem(index: Int, wordModel: WordModel, onItemClick: (Int) -> Unit, o
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 6.dp)
-            .height(96.dp)
+            .wrapContentHeight()
             .clickable {
                 onItemClick(index)
             },

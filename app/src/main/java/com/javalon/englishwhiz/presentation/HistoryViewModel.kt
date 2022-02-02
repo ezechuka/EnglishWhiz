@@ -19,9 +19,9 @@ class HistoryViewModel @Inject constructor(val wordRepo: WordRepository): ViewMo
     private val _history = mutableStateOf(listOf<WordModel>())
     val history: State<List<WordModel>> = _history
 
-    fun deleteWordModel(wordModel: WordModel) {
+    fun deleteHistory(wordModel: WordModel) {
         viewModelScope.launch(Dispatchers.IO) {
-            wordRepo.deleteBookmark(wordModel.toWordModelEntity())
+            wordRepo.deleteHistory(wordModel.toHistoryEntity())
             getAllHistory()
         }
     }

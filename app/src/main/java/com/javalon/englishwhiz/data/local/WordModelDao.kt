@@ -5,19 +5,26 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.javalon.englishwhiz.data.local.entity.WordModelEntity
+import com.javalon.englishwhiz.data.local.entity.BookmarkEntity
+import com.javalon.englishwhiz.data.local.entity.HistoryEntity
 
 @Dao
 interface WordModelDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertWordModel(wordModelEntity: WordModelEntity)
+    suspend fun insertBookmark(bookmarkEntity: BookmarkEntity)
 
-    @Query("SELECT * FROM wordModelTable WHERE isBookmark LIKE :bookmark")
-    suspend fun getAllBookmark(bookmark: Boolean = true): List<WordModelEntity>
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertHistory(historyEntity: HistoryEntity)
 
-    @Query("SELECT * FROM wordModelTable WHERE isBookmark LIKE :bookmark")
-    suspend fun getAllHistory(bookmark: Boolean = false): List<WordModelEntity>
+    @Query("SELECT * FROM bookmarkTable")
+    suspend fun getAllBookmark(): List<BookmarkEntity>
+
+    @Query("SELECT * FROM historyTable")
+    suspend fun getAllHistory(): List<HistoryEntity>
 
     @Delete
-    suspend fun deleteBookmark(wordModelEntity: WordModelEntity)
+    suspend fun deleteBookmark(bookmarkEntity: BookmarkEntity)
+
+    @Delete
+    suspend fun deleteHistory(historyEntity: HistoryEntity)
 }

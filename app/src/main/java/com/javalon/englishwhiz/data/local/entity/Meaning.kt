@@ -1,27 +1,20 @@
 package com.javalon.englishwhiz.data.local.entity
 
-import android.os.Parcelable
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.annotation.JsonProperty
-import kotlinx.parcelize.Parcelize
+import com.google.gson.annotations.SerializedName
 
-@JsonIgnoreProperties
-@JsonInclude(JsonInclude.Include.NON_NULL)
-@Parcelize
 data class Meaning(
-    @JsonProperty("def")
+    @SerializedName("def")
     val def: String,
 
-    @JsonProperty("example")
+    @SerializedName("example")
     val example: String?,
 
-    @JsonProperty("speech_part")
+    @SerializedName("speech_part")
     val speechPart: String,
 
-    @JsonProperty("synonyms")
+    @SerializedName("synonyms")
     val synonyms: List<String>?,
 
-    @JsonProperty("labels")
+    @SerializedName("labels")
     val labels: List<Label>?,
-): Parcelable
+)

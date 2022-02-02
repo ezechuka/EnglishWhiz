@@ -15,5 +15,6 @@ class MeaningConverter {
     @TypeConverter
     fun fromJson(jsonString: String): List<Meaning> {
         return Gson().fromJson(jsonString, object: TypeToken<List<Meaning>>() {}.type)
+            ?: emptyList()
     }
 }

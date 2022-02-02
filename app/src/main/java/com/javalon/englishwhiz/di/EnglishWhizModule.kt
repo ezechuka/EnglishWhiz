@@ -4,7 +4,9 @@ import android.content.Context
 import androidx.room.Room
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.javalon.englishwhiz.data.DictionaryDatabase
 import com.javalon.englishwhiz.data.WordModelDatabase
+import com.javalon.englishwhiz.data.local.DictionaryDao
 import com.javalon.englishwhiz.data.local.WordModelDao
 import com.javalon.englishwhiz.data.repository.WordRepository
 import dagger.Module
@@ -12,6 +14,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
@@ -21,24 +24,30 @@ object EnglishWhizModule {
     @Provides
     @Singleton
     fun provideWordRepository(
-        @ApplicationContext appContext: Context,
-        objectMapper: ObjectMapper,
+        dictionaryDao: DictionaryDao,
         wordModelDao: WordModelDao
     ): WordRepository {
-        return WordRepository(appContext, objectMapper, wordModelDao)
-    }
-
-    @Provides
-    @Singleton
-    fun provideGson(): ObjectMapper {
-        return ObjectMapper()
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+        return WordRepository(dictionaryDao, wordModelDao)
     }
 
     @Provides
     @Singleton
     fun provideWordModelDao(wordModelDatabase: WordModelDatabase): WordModelDao {
         return wordModelDatabase.wordModelDao
+    }
+
+    @Provides
+    @Singleton
+    fun provideDictionaryDao(dictionaryDatabase: DictionaryDatabase): DictionaryDao {
+        return dictionaryDatabase.dictionaryDao
+    }
+
+    @Provides
+    @Singleton
+    fun provideDictionaryDatabase(@ApplicationContext appContext: Context): DictionaryDatabase {
+        return Room.databaseBuilder(appContext, DictionaryDatabase::class.java, "dictionaryDb")
+            .createFromAsset("wordset/wordDB")
+            .build()
     }
 
     @Provides

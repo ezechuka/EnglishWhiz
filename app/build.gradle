@@ -102,11 +102,6 @@ dependencies {
 
     // Navigation
     implementation 'androidx.hilt:hilt-navigation-compose:1.0.0-alpha03'
-
-    // JACKSON
-    implementation "com.fasterxml.jackson.core:jackson-databind:2.0.1"
-    implementation 'com.fasterxml.jackson.core:jackson-core:2.0.1'
-    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.0.1'
 }
 
 // Allow references to generated code

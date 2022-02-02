@@ -35,7 +35,7 @@ fun HistoryScreen(viewModel: HistoryViewModel, onItemClick: (Int) -> Unit) {
         )
 
         BookmarkList(list = bookmarks.value, onItemClick = onItemClick) {
-            viewModel.deleteWordModel(it)
+            viewModel.deleteHistory(it)
         }
     }
 }
