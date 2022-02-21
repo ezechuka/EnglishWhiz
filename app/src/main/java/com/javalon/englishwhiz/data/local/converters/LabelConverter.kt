@@ -9,7 +9,7 @@ import com.javalon.englishwhiz.data.local.entity.Meaning
 class LabelConverter {
 
     @TypeConverter
-    fun toJson(labels: List<Label>): String {
+    fun fromList(labels: List<Label>): String {
         return Gson().toJson(labels)
     }
 

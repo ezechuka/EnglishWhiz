@@ -1,0 +1,78 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "1e012a2b48df8be705af29f919683799",
+    "entities": [
+      {
+        "tableName": "bookmarkTable",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`meanings` TEXT, `word` TEXT NOT NULL, `wordsetId` TEXT NOT NULL, PRIMARY KEY(`wordsetId`))",
+        "fields": [
+          {
+            "fieldPath": "meanings",
+            "columnName": "meanings",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "word",
+            "columnName": "word",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "wordsetId",
+            "columnName": "wordsetId",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "wordsetId"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "historyTable",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`meanings` TEXT, `word` TEXT NOT NULL, `wordsetId` TEXT NOT NULL, PRIMARY KEY(`wordsetId`))",
+        "fields": [
+          {
+            "fieldPath": "meanings",
+            "columnName": "meanings",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "word",
+            "columnName": "word",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "wordsetId",
+            "columnName": "wordsetId",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "wordsetId"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1e012a2b48df8be705af29f919683799')"
+    ]
+  }
+}

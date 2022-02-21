@@ -8,7 +8,7 @@ import com.javalon.englishwhiz.data.local.entity.Meaning
 class MeaningConverter {
 
     @TypeConverter
-    fun toJson(meaning: List<Meaning>): String {
+    fun fromJson(meaning: List<Meaning>): String {
         return Gson().toJson(meaning)
     }
 

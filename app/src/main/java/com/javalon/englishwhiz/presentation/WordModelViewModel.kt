@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.javalon.englishwhiz.data.repository.WordRepository
 import com.javalon.englishwhiz.domain.model.WordModel
+import com.javalon.englishwhiz.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
@@ -27,8 +28,9 @@ class WordModelViewModel @Inject constructor(private val wordRepo: WordRepositor
     val matches: State<List<String>> = _matches
 
     private var searchJob: Job? = null
+    private var prefixMatchJob: Job? = null
 
-    fun searcher(query: String) {
+    fun searcher(query: String, isWordClick: Boolean = false) {
         _searchQuery.value = query
         searchJob?.cancel()
         searchJob = viewModelScope.launch(IO) {
@@ -36,6 +38,7 @@ class WordModelViewModel @Inject constructor(private val wordRepo: WordRepositor
             val result = wordRepo.search(query).getOrNull(0)
             result?.let {
                 _state.value = it.toWordModel()
+                if (isWordClick) insertHistory(it.toWordModel())
             }
         }
     }
@@ -46,10 +49,19 @@ class WordModelViewModel @Inject constructor(private val wordRepo: WordRepositor
             return
         }
 
-        viewModelScope.launch(IO) {
-            wordRepo.prefixMatch(query).collectLatest { match ->
-                Log.d("VIEWMODEL", match.map { it.word }.toString())
-                _matches.value = match.map { it.word }
+        prefixMatchJob?.cancel()
+        prefixMatchJob = viewModelScope.launch(IO) {
+            wordRepo.prefixMatch(query).collectLatest { result ->
+                when (result) {
+                    is Resource.Success -> {
+                        val matches = result.data
+                        matches?.let { match ->
+                            _matches.value = match.map { it.word }
+                        }
+                    }
+                    is Resource.Loading -> {}
+                    is Resource.Error -> {}
+                }
             }
         }
     }
@@ -64,5 +76,10 @@ class WordModelViewModel @Inject constructor(private val wordRepo: WordRepositor
         viewModelScope.launch(IO) {
             wordRepo.insertHistory(wordModel.toHistoryEntity())
         }
+    }
+
+    private fun sanitizeSearchQuery(query: String): String {
+        val queryWithEscapedQuotes = query.replace(Regex.fromLiteral("\""), "\"\"")
+        return "*\"$queryWithEscapedQuotes\"*"
     }
 }

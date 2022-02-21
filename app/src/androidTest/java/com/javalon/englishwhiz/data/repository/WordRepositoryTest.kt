@@ -41,25 +41,25 @@ class WordRepositoryTest {
     }
 
     @Test
-    fun insertWordModel() = runBlocking {
+    fun insertBookmark() = runBlocking {
         val meaning =
             Meaning("definition", "example", "speechPart", synonyms = listOf("synon", "yms"),
                 labels = listOf(Label("label")
                 ))
-        val wordModelEntity = WordModel(listOf(meaning), "word", "23dfd31").toWordModelEntity()
-        wordModelDao.insertWordModel(wordModelEntity)
+        val wordModelEntity = WordModel(listOf(meaning), "word", "23dfd31").toBookmarkEntity()
+        wordModelDao.insertBookmark(wordModelEntity)
         val result = wordModelDao.getAllBookmark()
         assertThat(result).contains(wordModelEntity)
     }
 
     @Test
-    fun deleteWordModel() = runBlocking {
+    fun deleteBookmark() = runBlocking {
         val meaning =
             Meaning("definition", "example", "speechPart", synonyms = listOf("synon", "yms"),
                 labels = listOf(Label("label")
                 ))
-        val wordModelEntity = WordModel(listOf(meaning), "word", "23dfd31").toWordModelEntity()
-        wordModelDao.insertWordModel(wordModelEntity)
+        val wordModelEntity = WordModel(listOf(meaning), "word", "23dfd31").toBookmarkEntity()
+        wordModelDao.insertBookmark(wordModelEntity)
         wordModelDao.deleteBookmark(wordModelEntity)
         val result = wordModelDao.getAllBookmark()
         assertThat(result).doesNotContain(wordModelEntity)

@@ -8,7 +8,7 @@ import com.javalon.englishwhiz.data.local.entity.Meaning
 class SynonymConverter {
 
     @TypeConverter
-    fun toJson(synonym: List<String>): String {
+    fun fromList(synonym: List<String>): String {
         return Gson().toJson(synonym)
     }
 

@@ -17,15 +17,6 @@ class WordRepository @Inject constructor(
     private val wordModelDao: WordModelDao
 ) : BaseRepository {
 
-    override fun readFromDB(): Flow<Resource<List<WordModel>>> = flow {
-        val wordList = listOf<WordModel>()
-        emit(Resource.Loading(data = wordList))
-
-        val result = dictionaryDao.fetchDictionaryDB().map { it.toWordModel() }
-
-        emit(Resource.Success(data = result))
-    }
-
     override suspend fun insertBookmark(bookmarkEntity: BookmarkEntity) {
         wordModelDao.insertBookmark(bookmarkEntity)
     }
@@ -54,8 +45,10 @@ class WordRepository @Inject constructor(
         wordModelDao.deleteHistory(historyEntity)
     }
 
-    override fun prefixMatch(word: String): Flow<List<DictionaryEntity>> {
-        return dictionaryDao.prefixMatch(word)
+    override suspend fun prefixMatch(word: String): Flow<Resource<List<DictionaryEntity>>> = flow {
+        emit(Resource.Loading())
+        val matches = dictionaryDao.prefixMatch(word)
+        emit(Resource.Success(data = matches))
     }
 
     override suspend fun search(word: String): List<DictionaryEntity> {

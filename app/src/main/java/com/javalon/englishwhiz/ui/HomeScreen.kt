@@ -121,8 +121,8 @@ fun HomeScreen(
                     keyboardController?.hide()
                 },
                 onItemClick = {
-                    wordViewModel.searcher(it)
-                    wordViewModel.state.value?.let { searchHistory -> wordViewModel.insertHistory(searchHistory) }
+                    wordViewModel.searcher(it, true)
+//                    wordViewModel.state.value?.let { searchHistory -> wordViewModel.insertHistory(searchHistory) }
                 },
                 itemContent = {
                     Text(
