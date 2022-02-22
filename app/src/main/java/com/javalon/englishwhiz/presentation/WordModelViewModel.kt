@@ -1,10 +1,10 @@
 package com.javalon.englishwhiz.presentation
 
-import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.javalon.englishwhiz.data.repository.DictionaryRepository
 import com.javalon.englishwhiz.data.repository.WordRepository
 import com.javalon.englishwhiz.domain.model.WordModel
 import com.javalon.englishwhiz.util.Resource
@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class WordModelViewModel @Inject constructor(private val wordRepo: WordRepository) : ViewModel() {
+class WordModelViewModel @Inject constructor(private val wordRepo: WordRepository, private val dictRepository: DictionaryRepository) : ViewModel() {
     private val _searchQuery = mutableStateOf("")
     val searchQuery: State<String> = _searchQuery
 
@@ -34,8 +34,7 @@ class WordModelViewModel @Inject constructor(private val wordRepo: WordRepositor
         _searchQuery.value = query
         searchJob?.cancel()
         searchJob = viewModelScope.launch(IO) {
-            delay(500)
-            val result = wordRepo.search(query).getOrNull(0)
+            val result = dictRepository.search(query).getOrNull(0)
             result?.let {
                 _state.value = it.toWordModel()
                 if (isWordClick) insertHistory(it.toWordModel())
@@ -51,7 +50,7 @@ class WordModelViewModel @Inject constructor(private val wordRepo: WordRepositor
 
         prefixMatchJob?.cancel()
         prefixMatchJob = viewModelScope.launch(IO) {
-            wordRepo.prefixMatch(query).collectLatest { result ->
+            dictRepository.prefixMatch(query).collectLatest { result ->
                 when (result) {
                     is Resource.Success -> {
                         val matches = result.data
@@ -76,10 +75,5 @@ class WordModelViewModel @Inject constructor(private val wordRepo: WordRepositor
         viewModelScope.launch(IO) {
             wordRepo.insertHistory(wordModel.toHistoryEntity())
         }
-    }
-
-    private fun sanitizeSearchQuery(query: String): String {
-        val queryWithEscapedQuotes = query.replace(Regex.fromLiteral("\""), "\"\"")
-        return "*\"$queryWithEscapedQuotes\"*"
     }
 }

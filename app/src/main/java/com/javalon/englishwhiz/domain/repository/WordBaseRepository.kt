@@ -6,7 +6,7 @@ import com.javalon.englishwhiz.data.local.entity.HistoryEntity
 import com.javalon.englishwhiz.util.Resource
 import kotlinx.coroutines.flow.Flow
 
-interface BaseRepository {
+interface WordBaseRepository {
 
     suspend fun insertBookmark(bookmarkEntity: BookmarkEntity)
 
@@ -19,9 +19,5 @@ interface BaseRepository {
     suspend fun deleteBookmark(bookmarkEntity: BookmarkEntity)
 
     suspend fun deleteHistory(historyEntity: HistoryEntity)
-
-    suspend fun search(word: String): List<DictionaryEntity>
-
-    suspend fun prefixMatch(word: String): Flow<Resource<List<DictionaryEntity>>>
 
 }

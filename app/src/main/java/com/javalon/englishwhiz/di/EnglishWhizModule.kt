@@ -6,6 +6,7 @@ import com.javalon.englishwhiz.data.DictionaryDatabase
 import com.javalon.englishwhiz.data.WordModelDatabase
 import com.javalon.englishwhiz.data.local.DictionaryDao
 import com.javalon.englishwhiz.data.local.WordModelDao
+import com.javalon.englishwhiz.data.repository.DictionaryRepository
 import com.javalon.englishwhiz.data.repository.WordRepository
 import dagger.Module
 import dagger.Provides
@@ -21,10 +22,17 @@ object EnglishWhizModule {
     @Provides
     @Singleton
     fun provideWordRepository(
-        dictionaryDao: DictionaryDao,
         wordModelDao: WordModelDao
     ): WordRepository {
-        return WordRepository(dictionaryDao, wordModelDao)
+        return WordRepository(wordModelDao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideDictRepository(
+        dictionaryDao: DictionaryDao,
+    ): DictionaryRepository {
+        return DictionaryRepository(dictionaryDao)
     }
 
     @Provides
