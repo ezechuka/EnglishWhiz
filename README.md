@@ -28,8 +28,7 @@ EnglishWhiz offers some features which includes:
 * [Truth](https://truth.dev/)
 
 ## Search Feature
-Originally, I intended on using Trie data structure for prefix matching/searching but due to the time it takes to setup the Trie made it not feasible. So instead I had to go with
-SQLite query for prefix matching/searching which was less efficient than Trie but hopefully in the future the query can be made faster with SQL FTS feature.
+The search/prefeix matching was implemented with SQLite pattern matching strategy. Although using Trie data structure would be very efficient but the drawaback was the time & memory to setup making it not feasible. However, the feature can be improved using SQL FTS.
 
 ## TODO
 * Dark mode.
@@ -37,4 +36,4 @@ SQLite query for prefix matching/searching which was less efficient than Trie bu
 * Words linking.
 
 
-### If you like this project, leave a Star ⭐ to receive updates on your GitHub dashboard.
+## If you like this project, leave a ⭐ to receive updates on your GitHub dashboard.
