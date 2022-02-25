@@ -1,4 +1,16 @@
 ## EnglishWhiz - Dictionary App with Compose.
+<p>
+    <img src="https://github.com/ezechuka/EnglishWhiz/blob/main/asset/asset1.png" width="200px" height="auto"/>
+    <img src="https://github.com/ezechuka/EnglishWhiz/blob/main/asset/asset2.png" width="200px" width="200px" height="auto" hspace="10"/>
+    <img src="https://github.com/ezechuka/EnglishWhiz/blob/main/asset/asset6.png" width="200px" width="200px" height="auto" />
+</p>
+
+<p>
+    <img src="https://github.com/ezechuka/EnglishWhiz/blob/main/asset/asset3.png" width="200px" height="auto"/>
+    <img src="https://github.com/ezechuka/EnglishWhiz/blob/main/asset/asset4.png" width="200px" width="200px" height="auto" hspace="10"/>
+    <img src="https://github.com/ezechuka/EnglishWhiz/blob/main/asset/asset5.png" width="200px" width="200px" height="auto" />
+</p>
+
 EnglishWhiz features fast word lookup using Modern Android tools including Compose. With over 177k words available in its offline database built with simple & minimal user interface in mind.
 The data used in this project was made available by this awesome open-source [repository](https://github.com/wordset/wordset-dictionary) (sad to see was abandoned :smiling_face_with_tear:).
 EnglishWhiz offers some features which includes:
