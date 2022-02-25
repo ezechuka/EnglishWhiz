@@ -7,6 +7,8 @@ import androidx.lifecycle.viewModelScope
 import com.javalon.englishwhiz.data.repository.DictionaryRepository
 import com.javalon.englishwhiz.data.repository.WordRepository
 import com.javalon.englishwhiz.domain.model.WordModel
+import com.javalon.englishwhiz.domain.repository.DictionaryBaseRepository
+import com.javalon.englishwhiz.domain.repository.WordBaseRepository
 import com.javalon.englishwhiz.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
@@ -17,7 +19,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class WordModelViewModel @Inject constructor(private val wordRepo: WordRepository, private val dictRepository: DictionaryRepository) : ViewModel() {
+class WordModelViewModel @Inject constructor(private val wordRepo: WordBaseRepository, private val dictRepository: DictionaryBaseRepository) : ViewModel() {
     private val _searchQuery = mutableStateOf("")
     val searchQuery: State<String> = _searchQuery
 

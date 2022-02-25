@@ -8,6 +8,8 @@ import com.javalon.englishwhiz.data.local.DictionaryDao
 import com.javalon.englishwhiz.data.local.WordModelDao
 import com.javalon.englishwhiz.data.repository.DictionaryRepository
 import com.javalon.englishwhiz.data.repository.WordRepository
+import com.javalon.englishwhiz.domain.repository.DictionaryBaseRepository
+import com.javalon.englishwhiz.domain.repository.WordBaseRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -23,7 +25,7 @@ object EnglishWhizModule {
     @Singleton
     fun provideWordRepository(
         wordModelDao: WordModelDao
-    ): WordRepository {
+    ): WordBaseRepository {
         return WordRepository(wordModelDao)
     }
 
@@ -31,7 +33,7 @@ object EnglishWhizModule {
     @Singleton
     fun provideDictRepository(
         dictionaryDao: DictionaryDao,
-    ): DictionaryRepository {
+    ): DictionaryBaseRepository {
         return DictionaryRepository(dictionaryDao)
     }
 
