@@ -9,7 +9,7 @@ import com.google.gson.reflect.TypeToken
 import com.javalon.englishwhiz.data.local.converters.MeaningConverter
 import com.javalon.englishwhiz.domain.model.WordModel
 
-@Entity(tableName = "dictionary_table")
+@Entity(tableName = "a_table")
 data class DictionaryEntity(
     @ColumnInfo(name = "meanings")
     val meanings: String?,

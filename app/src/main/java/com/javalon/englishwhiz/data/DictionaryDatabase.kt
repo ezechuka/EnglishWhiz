@@ -10,7 +10,7 @@ import com.javalon.englishwhiz.data.local.converters.SynonymConverter
 import com.javalon.englishwhiz.data.local.entity.DictionaryEntity
 
 @TypeConverters(value = [MeaningConverter::class, SynonymConverter::class, LabelConverter::class])
-@Database(entities = [DictionaryEntity::class], exportSchema = true, version = 1)
+@Database(entities = [DictionaryEntity::class], exportSchema = true, version = 2)
 abstract class DictionaryDatabase: RoomDatabase() {
     abstract val dictionaryDao: DictionaryDao
 }

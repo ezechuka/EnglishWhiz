@@ -35,6 +35,9 @@ class WordModelViewModel @Inject constructor(private val wordRepo: WordBaseRepos
     fun searcher(query: String, isWordClick: Boolean = false) {
         _searchQuery.value = query
         searchJob?.cancel()
+        if (query.isBlank()) {
+            return
+        }
         searchJob = viewModelScope.launch(IO) {
             val result = dictRepository.search(query).getOrNull(0)
             result?.let {
@@ -45,7 +48,7 @@ class WordModelViewModel @Inject constructor(private val wordRepo: WordBaseRepos
     }
 
     fun prefixMatcher(query: String) {
-        if (query.isEmpty()) {
+        if (query.isBlank()) {
             _matches.value = emptyList() // clear previous `matches` state
             return
         }

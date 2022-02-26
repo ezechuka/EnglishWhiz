@@ -2,10 +2,10 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "58a86dd076b82b15c0e317fc3fd6bfec",
+    "identityHash": "baae42e53c400901858546dd65062d14",
     "entities": [
       {
-        "tableName": "dictionary_table",
+        "tableName": "a_table",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`meanings` TEXT, `word` TEXT NOT NULL, `wordsetId` TEXT NOT NULL, PRIMARY KEY(`wordsetId`))",
         "fields": [
           {
@@ -35,59 +35,12 @@
         },
         "indices": [],
         "foreignKeys": []
-      },
-      {
-        "ftsVersion": "FTS4",
-        "ftsOptions": {
-          "tokenizer": "simple",
-          "tokenizerArgs": [],
-          "contentTable": "dictionary_table",
-          "languageIdColumnName": "",
-          "matchInfo": "FTS4",
-          "notIndexedColumns": [],
-          "prefixSizes": [],
-          "preferredOrder": "ASC"
-        },
-        "contentSyncTriggers": [
-          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_dictionary_table_fts_BEFORE_UPDATE BEFORE UPDATE ON `dictionary_table` BEGIN DELETE FROM `dictionary_table_fts` WHERE `docid`=OLD.`rowid`; END",
-          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_dictionary_table_fts_BEFORE_DELETE BEFORE DELETE ON `dictionary_table` BEGIN DELETE FROM `dictionary_table_fts` WHERE `docid`=OLD.`rowid`; END",
-          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_dictionary_table_fts_AFTER_UPDATE AFTER UPDATE ON `dictionary_table` BEGIN INSERT INTO `dictionary_table_fts`(`docid`, `meanings`, `word`, `wordsetId`) VALUES (NEW.`rowid`, NEW.`meanings`, NEW.`word`, NEW.`wordsetId`); END",
-          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_dictionary_table_fts_AFTER_INSERT AFTER INSERT ON `dictionary_table` BEGIN INSERT INTO `dictionary_table_fts`(`docid`, `meanings`, `word`, `wordsetId`) VALUES (NEW.`rowid`, NEW.`meanings`, NEW.`word`, NEW.`wordsetId`); END"
-        ],
-        "tableName": "dictionary_table_fts",
-        "createSql": "CREATE VIRTUAL TABLE IF NOT EXISTS `${TABLE_NAME}` USING FTS4(`meanings` TEXT, `word` TEXT NOT NULL, `wordsetId` TEXT NOT NULL, content=`dictionary_table`)",
-        "fields": [
-          {
-            "fieldPath": "meanings",
-            "columnName": "meanings",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
-            "fieldPath": "word",
-            "columnName": "word",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "wordsetId",
-            "columnName": "wordsetId",
-            "affinity": "TEXT",
-            "notNull": true
-          }
-        ],
-        "primaryKey": {
-          "columnNames": [],
-          "autoGenerate": false
-        },
-        "indices": [],
-        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '58a86dd076b82b15c0e317fc3fd6bfec')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'baae42e53c400901858546dd65062d14')"
     ]
   }
 }

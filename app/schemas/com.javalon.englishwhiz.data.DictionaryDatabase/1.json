@@ -2,10 +2,10 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "6b8c60f91e41ada41b4c71e9b3198601",
+    "identityHash": "baae42e53c400901858546dd65062d14",
     "entities": [
       {
-        "tableName": "dictionary_table",
+        "tableName": "a_table",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`meanings` TEXT, `word` TEXT NOT NULL, `wordsetId` TEXT NOT NULL, PRIMARY KEY(`wordsetId`))",
         "fields": [
           {
@@ -40,7 +40,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '6b8c60f91e41ada41b4c71e9b3198601')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'baae42e53c400901858546dd65062d14')"
     ]
   }
 }
