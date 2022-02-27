@@ -1,12 +1,17 @@
 package com.javalon.englishwhiz.ui
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -43,38 +48,59 @@ import com.javalon.englishwhiz.ui.theme.cardBGDay
 fun BookmarkScreen(viewModel: BookmarkViewModel, onItemClick: (Int) -> Unit) {
     viewModel.getAllBookmark()
     val bookmarks by remember { mutableStateOf(viewModel.bookmarks) }
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Text(
-            text = "Bookmarks",
-            style = MaterialTheme.typography.h6,
-            color = blueText,
-            modifier = Modifier
-                .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 0.dp)
-                .align(Alignment.Start)
-        )
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Text(
+                text = "Bookmarks",
+                style = MaterialTheme.typography.h6,
+                color = blueText,
+                modifier = Modifier
+                    .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 0.dp)
+                    .align(Alignment.Start)
+            )
 
-        BookmarkList(list = bookmarks.value, onItemClick = onItemClick) {
-            viewModel.deleteBookmark(it)
+            BookmarkList(list = bookmarks.value, onItemClick = onItemClick) {
+                viewModel.deleteBookmark(it)
+            }
+        }
+        if (bookmarks.value.isEmpty()) {
+            Text(
+                text = "Bookmark is empty. Click on the 'save' icon in Home to add to bookmark",
+                style = MaterialTheme.typography.subtitle2,
+                fontWeight = FontWeight.ExtraLight,
+                textAlign = TextAlign.Center,
+                color = blueText,
+                modifier = Modifier.padding(16.dp).align(Alignment.Center)
+            )
+        }
+    }
+
+}
+
+@ExperimentalUnitApi
+@Composable
+fun BookmarkList(
+    list: List<WordModel>,
+    onItemClick: (Int) -> Unit,
+    onDeleteClick: (WordModel) -> Unit
+) {
+    LazyColumn(modifier = Modifier.padding(horizontal = 16.dp)) {
+        itemsIndexed(list) { index, item ->
+            BookmarkItem(index, wordModel = item, onItemClick, onDeleteClick)
         }
     }
 }
 
 @ExperimentalUnitApi
 @Composable
-fun BookmarkList(list: List<WordModel>, onItemClick: (Int) -> Unit, onDeleteClick: (WordModel) -> Unit) {
-        LazyColumn(modifier = Modifier.padding(horizontal = 16.dp)) {
-            itemsIndexed(list) { index, item ->
-                BookmarkItem(index, wordModel = item, onItemClick, onDeleteClick)
-            }
-        }
-}
-
-@ExperimentalUnitApi
-@Composable
-fun BookmarkItem(index: Int, wordModel: WordModel, onItemClick: (Int) -> Unit, onDeleteClick: (WordModel) -> Unit) {
+fun BookmarkItem(
+    index: Int,
+    wordModel: WordModel,
+    onItemClick: (Int) -> Unit,
+    onDeleteClick: (WordModel) -> Unit
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
