@@ -5,9 +5,9 @@
     <application
         android:name=".di.App"
         android:allowBackup="false"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/englishwhiz_icon"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/englishwhiz_icon_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.EnglishWhiz">
         <activity
