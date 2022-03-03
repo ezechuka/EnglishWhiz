@@ -11,6 +11,10 @@
     <img src="https://github.com/ezechuka/EnglishWhiz/blob/main/asset/asset5.png" width="200px" width="200px" height="auto" />
 </p>
 
+<a href="https://apt.izzysoft.de/fdroid/index/apk/com.javalon.englishwhiz">
+<img width="200px" alt="F-Droid Badge" src="https://github.com/ezechuka/EnglishWhiz/blob/main/asset/IzzyOnDroid.png"/>
+<a/>
+
 EnglishWhiz features fast word lookup using Modern Android tools including Compose. With over 177k words available in its offline database built with simple & minimal user interface in mind.
 The data used in this project was made available by this awesome open-source [repository](https://github.com/wordset/wordset-dictionary) (sad to see was abandoned :smiling_face_with_tear:).
 EnglishWhiz offers some features which includes:
