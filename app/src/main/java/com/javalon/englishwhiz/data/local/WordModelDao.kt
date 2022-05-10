@@ -7,6 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.javalon.englishwhiz.data.local.entity.BookmarkEntity
 import com.javalon.englishwhiz.data.local.entity.HistoryEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface WordModelDao {
@@ -17,10 +18,10 @@ interface WordModelDao {
     suspend fun insertHistory(historyEntity: HistoryEntity)
 
     @Query("SELECT * FROM bookmarkTable")
-    suspend fun getAllBookmark(): List<BookmarkEntity>
+    fun getAllBookmark(): Flow<List<BookmarkEntity>>
 
     @Query("SELECT * FROM historyTable")
-    suspend fun getAllHistory(): List<HistoryEntity>
+    fun getAllHistory(): Flow<List<HistoryEntity>>
 
     @Delete
     suspend fun deleteBookmark(bookmarkEntity: BookmarkEntity)

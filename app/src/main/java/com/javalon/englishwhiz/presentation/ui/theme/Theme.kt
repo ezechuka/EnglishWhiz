@@ -1,4 +1,4 @@
-package com.javalon.englishwhiz.ui.theme
+package com.javalon.englishwhiz.presentation.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
@@ -10,26 +10,29 @@ import androidx.compose.ui.graphics.Color
 private val DarkColorPalette = darkColors(
     primary = Purple200,
     primaryVariant = Purple700,
-    secondary = Teal200
+    secondary = Teal200,
+    background = blueBGNight,
+    surface = cardBGNight,
+    onSurface = pinkText,
+    onBackground = pinkText
 )
 
 private val LightColorPalette = lightColors(
     primary = Purple500,
     primaryVariant = Purple700,
     secondary = Teal200,
-
     background = blueBGDay,
     surface = cardBGDay,
     onSurface = blueText,
     onPrimary = Color.White,
     onSecondary = Color.Black,
-    onBackground = Color.Black
+    onBackground = blueText
 )
 
 @Composable
 fun EnglishWhizTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable() () -> Unit
+    content: @Composable () -> Unit
 ) {
     val colors = if (darkTheme) {
         DarkColorPalette

@@ -3,9 +3,9 @@ package com.javalon.englishwhiz.presentation
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.google.common.truth.Truth.assertThat
 import com.javalon.englishwhiz.data.repository.WordRepository
+import com.javalon.englishwhiz.presentation.home.WordModelViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test

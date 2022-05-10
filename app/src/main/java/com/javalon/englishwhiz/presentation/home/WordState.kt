@@ -1,4 +1,4 @@
-package com.javalon.englishwhiz.presentation
+package com.javalon.englishwhiz.presentation.home
 
 import com.javalon.englishwhiz.domain.model.WordModel
 

@@ -12,9 +12,9 @@ interface WordBaseRepository {
 
     suspend fun insertHistory(historyEntity: HistoryEntity)
 
-    suspend fun getAllBookmark(): Flow<Resource<List<BookmarkEntity>>>
+    suspend fun getAllBookmark(): Flow<List<BookmarkEntity>>
 
-    suspend fun getAllHistory(): Flow<Resource<List<HistoryEntity>>>
+    suspend fun getAllHistory(): Flow<List<HistoryEntity>>
 
     suspend fun deleteBookmark(bookmarkEntity: BookmarkEntity)
 

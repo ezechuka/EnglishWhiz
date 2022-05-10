@@ -1,7 +1,7 @@
 package com.javalon.englishwhiz.util
 
 import com.javalon.englishwhiz.domain.model.WordModel
-import com.javalon.englishwhiz.presentation.WordState
+import com.javalon.englishwhiz.presentation.home.WordState
 
 class Trie<Key> {
     // root of a Trie always has the `key` and `parent` as null.

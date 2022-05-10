@@ -1,4 +1,4 @@
-package com.javalon.englishwhiz.ui.theme
+package com.javalon.englishwhiz.presentation.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

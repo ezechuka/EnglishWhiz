@@ -17,7 +17,7 @@ class DictionaryRepository @Inject constructor(
         val isValidLetter = Character.isLetter(word.first().lowercase().toCharArray()[0])
         if (isValidLetter) {
             val query = """
-                SELECT * FROM ${word.first()}_table WHERE word LIKE ? ORDER BY word ASC LIMIT 6
+                SELECT * FROM ${word.first()}_table WHERE word LIKE ? ORDER BY word ASC LIMIT 20
             """
             val queryObj = SimpleSQLiteQuery(query, arrayOf("${word}%"))
             val matches = dictionaryDao.prefixMatch(queryObj)

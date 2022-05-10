@@ -21,17 +21,11 @@ class WordRepository @Inject constructor(
         wordModelDao.insertHistory(historyEntity)
     }
 
-    override suspend fun getAllBookmark(): Flow<Resource<List<BookmarkEntity>>> = flow {
-        emit(Resource.Loading())
-        val result = wordModelDao.getAllBookmark()
-        emit(Resource.Success(data = result))
-    }
+    override suspend fun getAllBookmark(): Flow<List<BookmarkEntity>> =
+        wordModelDao.getAllBookmark()
 
-    override suspend fun getAllHistory(): Flow<Resource<List<HistoryEntity>>> = flow {
-        emit(Resource.Loading())
-        val result = wordModelDao.getAllHistory()
-        emit(Resource.Success(data = result))
-    }
+    override suspend fun getAllHistory(): Flow<List<HistoryEntity>> =
+        wordModelDao.getAllHistory()
 
     override suspend fun deleteBookmark(bookmarkEntity: BookmarkEntity) {
         wordModelDao.deleteBookmark(bookmarkEntity)

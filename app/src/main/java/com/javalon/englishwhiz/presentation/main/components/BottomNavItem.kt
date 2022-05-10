@@ -1,7 +1,7 @@
-package com.javalon.englishwhiz.presentation
+package com.javalon.englishwhiz.presentation.main.components
 
 import com.javalon.englishwhiz.R
-import com.javalon.englishwhiz.ui.navigation.NavScreen
+import com.javalon.englishwhiz.presentation.navigation.NavScreen
 
 data class BottomNavItem(
     val title: String,

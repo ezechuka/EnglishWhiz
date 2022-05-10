@@ -1,4 +1,4 @@
-package com.javalon.englishwhiz.ui.navigation
+package com.javalon.englishwhiz.presentation.navigation
 
 sealed class NavScreen(val route: String) {
     object HomeScreen: NavScreen(route = "Home") {

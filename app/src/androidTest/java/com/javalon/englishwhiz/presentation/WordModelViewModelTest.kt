@@ -13,6 +13,7 @@ import com.javalon.englishwhiz.data.local.entity.Meaning
 import com.javalon.englishwhiz.data.repository.DictionaryRepository
 import com.javalon.englishwhiz.data.repository.WordRepository
 import com.javalon.englishwhiz.domain.model.WordModel
+import com.javalon.englishwhiz.presentation.home.WordModelViewModel
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
