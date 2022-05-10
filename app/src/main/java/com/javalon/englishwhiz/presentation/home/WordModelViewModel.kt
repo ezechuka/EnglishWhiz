@@ -1,17 +1,15 @@
 package com.javalon.englishwhiz.presentation.home
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.javalon.englishwhiz.domain.model.WordModel
 import com.javalon.englishwhiz.domain.repository.DictionaryBaseRepository
 import com.javalon.englishwhiz.domain.repository.WordBaseRepository
-import com.javalon.englishwhiz.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -40,7 +38,7 @@ class WordModelViewModel @Inject constructor(
         searchJob?.cancel()
 
         searchJob = viewModelScope.launch(IO) {
-            val result = dictRepository.search(query).getOrNull(0)
+            val result = dictRepository.search(query).firstOrNull()?.first()
             result?.let {
                 wordState.value = WordState(it.toWordModel())
                 if (isWordClick) insertHistory(it.toWordModel())
@@ -49,26 +47,13 @@ class WordModelViewModel @Inject constructor(
     }
 
     fun prefixMatcher(query: String) {
-        if (query.isBlank()) {
-            clearSuggestions()
-            return
-        }
+        clearSuggestions()
 
-        searchQuery.value = query
         prefixMatchJob?.cancel()
         prefixMatchJob = viewModelScope.launch(IO) {
-            dictRepository.prefixMatch(query).collect { result ->
-                when (result) {
-                    is Resource.Success -> {
-                        val matches = result.data
-                        matches?.let { match ->
-                            suggestions.value = match.map { it.word }
-                        }
-                    }
-                    is Resource.Loading -> {
-                    }
-                    else -> {
-                    }
+            dictRepository.prefixMatch(query).collect { matches ->
+                matches.let { match ->
+                    suggestions.value = match.map { it.word }
                 }
             }
         }

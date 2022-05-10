@@ -12,29 +12,26 @@ import javax.inject.Inject
 class DictionaryRepository @Inject constructor(
     private val dictionaryDao: DictionaryDao,
 ) : DictionaryBaseRepository {
-    override suspend fun prefixMatch(word: String): Flow<Resource<List<DictionaryEntity>>> = flow {
-        emit(Resource.Loading())
+    override fun prefixMatch(word: String): Flow<List<DictionaryEntity>> = flow {
         val isValidLetter = Character.isLetter(word.first().lowercase().toCharArray()[0])
         if (isValidLetter) {
             val query = """
                 SELECT * FROM ${word.first()}_table WHERE word LIKE ? ORDER BY word ASC LIMIT 20
             """
             val queryObj = SimpleSQLiteQuery(query, arrayOf("${word}%"))
-            val matches = dictionaryDao.prefixMatch(queryObj)
-            emit(Resource.Success(data = matches))
+            emit(dictionaryDao.prefixMatch(queryObj))
         }
 
     }
 
-    override suspend fun search(word: String): List<DictionaryEntity> {
+    override fun search(word: String): Flow<List<DictionaryEntity>> = flow {
         val isValidLetter = Character.isLetter(word.first().lowercase().toCharArray()[0])
         if (isValidLetter) {
             val query = """
                 SELECT * FROM ${word.first()}_table WHERE word = ?
             """
             val queryObj = SimpleSQLiteQuery(query, arrayOf(word))
-            return listOf(dictionaryDao.search(queryObj))
+            emit(listOf(dictionaryDao.search(queryObj)))
         }
-       return listOf()
     }
 }

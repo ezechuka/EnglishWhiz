@@ -1,10 +1,8 @@
 package com.javalon.englishwhiz.presentation.home.components
 
 import android.content.Intent
-import android.util.Log
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ScaffoldState
-import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -15,7 +13,6 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.javalon.englishwhiz.presentation.home.TTSListener
 import com.javalon.englishwhiz.presentation.home.WordModelViewModel
 import com.javalon.englishwhiz.presentation.home.dictionaryStringBuilder
@@ -51,9 +48,11 @@ fun UtilButtons(scaffold: ScaffoldState, viewModel: WordModelViewModel) {
         clickedState = !clickedState
 
         if (clickedState) {
-            ttsListener.speak(dictionaryStringBuilder.toString())
-            coroutineScope.launch {
-                scaffold.snackbarHostState.showSnackbar(message = "Speaking")
+            if (dictionaryStringBuilder.toString().isNotBlank()) {
+                ttsListener.speak(dictionaryStringBuilder.toString())
+                coroutineScope.launch {
+                    scaffold.snackbarHostState.showSnackbar(message = "Speaking")
+                }
             }
         } else {
             ttsListener.stop()

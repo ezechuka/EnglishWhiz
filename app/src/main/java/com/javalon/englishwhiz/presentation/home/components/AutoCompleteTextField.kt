@@ -14,7 +14,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
-import androidx.compose.material.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -58,7 +57,8 @@ fun <T> AutoCompleteTextField(
             value = searchQuery,
             onValueChange = {
                 searchQuery = it
-                onSearch(it.text)
+                if (it.text.isNotBlank())
+                    onSearch(it.text)
             },
             singleLine = true,
             placeholder = {
@@ -112,11 +112,11 @@ fun <T> AutoCompleteTextField(
             ) {
                 suggestions.forEach { label ->
                     DropdownMenuItem(onClick = {
-                        onItemClick(label)
                         searchQuery = TextFieldValue(
                             label.toString(),
                             selection = TextRange(label.toString().length)
                         )
+                        onItemClick(label)
                         expandedState = false
                     }) {
                         itemContent(label)

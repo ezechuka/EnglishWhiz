@@ -3,7 +3,6 @@ package com.javalon.englishwhiz.presentation.home
 import android.content.Context
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
-import android.util.Log
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 
@@ -21,9 +20,7 @@ class TTSListener(context: Context, private val onSpeechCompleted: () -> Unit) :
 
     fun speak(text: String) {
         if (onInit) {
-            if (text.isNotBlank()) {
                 textToSpeechEngine.speak(text, TextToSpeech.QUEUE_FLUSH, null, "tts1")
-            }
         }
     }
 
