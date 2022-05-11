@@ -21,6 +21,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <meta-data
+            android:name="io.sentry.dsn"
+            android:value="https://ab0de45c402047fcbb3c74fe8cf84ad4@o1241201.ingest.sentry.io/6394834" />
+
+        <meta-data
+            android:name="io.sentry.traces.sample-rate"
+            android:value="1.0" />
     </application>
 
 </manifest>
