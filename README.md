@@ -13,6 +13,8 @@
     <img src="https://github.com/ezechuka/EnglishWhiz/blob/main/asset/asset6.png" width="200px" width="200px" height="auto" />
 </p>
 
+<a href='https://play.google.com/store/apps/details?id=com.javalon.englishwhiz&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img width="200px" alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png'/></a>
+
 <a href="https://apt.izzysoft.de/fdroid/index/apk/com.javalon.englishwhiz">
 <img width="200px" alt="F-Droid Badge" src="https://github.com/ezechuka/EnglishWhiz/blob/main/asset/IzzyOnDroid.png"/>
 <a/>
