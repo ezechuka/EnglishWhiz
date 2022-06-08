@@ -13,8 +13,7 @@ class DictionaryRepository @Inject constructor(
     private val dictionaryDao: DictionaryDao,
 ) : DictionaryBaseRepository {
     override fun prefixMatch(word: String): Flow<List<DictionaryEntity>> = flow {
-        val isValidLetter = Character.isLetter(word.first().lowercase().toCharArray()[0])
-        if (isValidLetter) {
+        if (validateChar(word)) {
             val query = """
                 SELECT * FROM ${word.first()}_table WHERE word LIKE ? ORDER BY word ASC LIMIT 20
             """
@@ -25,8 +24,7 @@ class DictionaryRepository @Inject constructor(
     }
 
     override fun search(word: String): Flow<List<DictionaryEntity>> = flow {
-        val isValidLetter = Character.isLetter(word.first().lowercase().toCharArray()[0])
-        if (isValidLetter) {
+        if (validateChar(word)) {
             val query = """
                 SELECT * FROM ${word.first()}_table WHERE word = ?
             """
@@ -34,4 +32,11 @@ class DictionaryRepository @Inject constructor(
             emit(listOf(dictionaryDao.search(queryObj)))
         }
     }
+}
+
+private fun validateChar(word: String) : Boolean {
+    val firstChar = word.first().lowercase().toCharArray()[0]
+    val isValidLetter = Character.isLetter(firstChar)
+    val inASCII = firstChar in 'a'..'z'
+    return isValidLetter && inASCII
 }
