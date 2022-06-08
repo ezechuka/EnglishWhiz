@@ -24,6 +24,7 @@ fun UtilButtons(scaffold: ScaffoldState, viewModel: WordModelViewModel) {
     val coroutineScope = rememberCoroutineScope()
     val clipboardManager = LocalClipboardManager.current
     val context = LocalContext.current
+    val packageName = context.packageName
 
     CopyButton {
         if (dictionaryStringBuilder.toString().isNotEmpty()) {
@@ -73,7 +74,7 @@ fun UtilButtons(scaffold: ScaffoldState, viewModel: WordModelViewModel) {
         val intentFileChooser = Intent(Intent.ACTION_SEND)
         intentFileChooser.putExtra(
             Intent.EXTRA_TEXT,
-            "Please download and rate us now: www.google.com"
+            "Please download and rate us now: https://play.google.com/store/apps/details?id=$packageName"
         )
         intentFileChooser.type = "text/plain"
         val intent = Intent.createChooser(intentFileChooser, "Share EnglishWhiz")
